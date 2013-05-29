@@ -9,40 +9,62 @@ if (!String.prototype.format) {
 		};
 	}
 
+var cardDetails = {
+	suits: { 
+		'H': ['heart', '&#9829;'],
+		'C': ['club', '&#9827;'],
+		'D': ['diamond', '&#9830;'],
+		'S': ['spade', '&#9824;']
+	},
+	cards: ['two','three','four','five','six','seven','eight','nine','ten','jack','queen','king','ace'],
+	faceLayout: [
+		['top_center','bottom_center'],
+		['top_center','middle_center','bottom_center'],
+		['top_left','top_right','bottom_left','bottom_right'],
+        ['top_left', 'top_right', 'middle_center','bottom_left','bottom_right'],
+        ['top_left', 'top_right', 'middle_left','middle_right','bottom_left','bottom_right'],
+        ['top_left', 'top_right', 'middle_left','middle_top','middle_right','bottom_left','bottom_right'],
+        ['top_left', 'top_right', 'middle_top_left', 'middle_top_right', 'bottom_left', 'bottom_right', 'middle_bottom_left', 'middle_bottom_right'],
+        ['top_left', 'top_right', 'middle_top_left', 'middle_center', 'middle_top_right', 'bottom_left', 'bottom_right', 'middle_bottom_left', 'middle_bottom_right'],
+		['top_left','top_right','middle_top_left', 'middle_top_center', 'middle_top_right', 'bottom_left', 'bottom_right', 'middle_bottom_center', 'middle_bottom_left', 'middle_bottom_right'],
+		['middle_center']
+	]
+}
 
 function drawCard(card) { 
-	var rx = /^([0-9]{1,2}|[AJQK-])([CDHS-])$/i;
-	var match = rx.exec(card);
-	var rank = match[1], suit = "", symbol;
-	switch (match[2]) {
-		case "H":
-			suit = "hearts";
-			symbol = "♠";
-			break;
-		case "D":
-			suit = "diams";
-			symbol = "♦";
-			break;
-		case "C":
-			suit = "clubs";
-			symbol = "♣";
-			break;
-		case "S":
-			suit = "spades";
-			symbol = "♠";
-			break;
-		default:
-			suit = "";
-			symbol = "";
-			rank = "";
-			break;
+	if (card === '--') { 
+		return '<div class="card"><div class="back"> </div></div>';
 	}
 
-	if (suit.length === 0) { 
-		return '<li><a href="#" class="card back"></a></li>';
-	} else { 
-		return '<li><a href="#" class="card rank-{0} {1}"><span class="rank">{3}</span><span class="suit">{2}</span></a></li>'.format(rank.toLowerCase(), suit, symbol,rank.toUpperCase());
+	var rx = /^([0-9]{1,2}|[AJQK-])([CDHS-])$/i;
+	var match = rx.exec(card), faceLayout, faceNumber;
+	switch (match[1]) { 
+		case "J":
+		case "Q":
+		case "K":
+		case "A":
+			faceNumber = 9;
+			break;
+		default:
+			faceNumber = parseInt(match[1]) - 2;
 	}
+	var html = '<div class="card ' + cardDetails.suits[match[2]][0] + '">\
+		<div class="corner top">\
+			<span class="number">' + match[1] + '</span>\
+			<span>' + cardDetails.suits[match[2]][1] + '</span>\
+		</div>';
+	
+	faceLayout = cardDetails.faceLayout[faceNumber];
+	for (var i = 0; i < faceLayout.length; i++) {  
+		html +=	'<span class="suit ' + faceLayout[i] + '">' + cardDetails.suits[match[2]][1] + '</span>'
+	}
+
+	html +='	<div class="corner bottom">\
+			<span class="number">' + match[1] + '</span>\
+			<span>' + cardDetails.suits[match[2]][1] + '</span>\
+		</div>\
+	</div>';
+	return html;
 }
 
 function drawPlayersHand(hand, location) { 
