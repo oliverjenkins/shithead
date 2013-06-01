@@ -22,10 +22,6 @@ https://github.com/zachwaugh/Helveticards
 
 }
 .card {
-  background-color: white;
-  background-image: radial-gradient(#191970 9px, transparent 10px), repeating-radial-gradient(#191970 0, #191970 4px, transparent 5px, transparent 20px, #191970 21px, #191970 25px, transparent 26px, transparent 50px);
-  background-size: 30px 30px, 90px 90px;
-  background-position: 0 0;
   background-color: #fff;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -39,10 +35,8 @@ https://github.com/zachwaugh/Helveticards
   z-index: 2;
 }
 .card .back {
-  background-color: white;
-  background-image: radial-gradient(#191970 9px, transparent 10px), repeating-radial-gradient(#191970 0, #191970 4px, transparent 5px, transparent 20px, #191970 21px, #191970 25px, transparent 26px, transparent 50px);
-  background-size: 30px 30px, 90px 90px;
-  background-position: 0 0;
+  background-color: red;
+  -webkit-transform: rotateY(180deg);
 }
 .card.flipped {
   -webkit-transform: rotateY(180deg);

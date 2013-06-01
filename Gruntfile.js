@@ -26,25 +26,70 @@ module.exports = function(grunt) {
 	},
 	jshint: {
 	  // define the files to lint
-	  files: ['lib/*.js','public/js/*.js'],
+	  files: ['public/js/*.js'],
 	  // configure JSHint (documented at http://www.jshint.com/docs/)
 	  options: {
-	      // more options here if you want to override JSHint defaults
+	  	ignores: ['public/js/*.tmpl.js'],
 	    globals: {
 	      jQuery: true,
 	      console: true,
 	      module: true
 	    }
+
 	  }
 	},
+
+	ember_handlebars: {
+      all: {
+        // In practice, this could be:
+        // src: ['templates/**/*.hbs', 'templates/**/*.handlebars']
+        src: ['views/templates/*.hbs'],
+        dest: 'public/js/game.tmpl.js'
+      },
+      options: {
+		  processName: function(filename) {
+		  	// this will give the name 'index' rather than the default 'views/templates/index.hbs' name
+		  	return filename.substring(filename.lastIndexOf('/')+ 1,filename.length - 4);
+		  }
+		}
+    },
+
+	watch: {
+		scripts: {
+			files: ['public/js/*.js'],
+			tasks: ['jshint'],
+			options: {
+				nospawn: true,
+			},
+		},
+		less: {
+			files: ['public/css/less/*.less'],
+			tasks: ['less'],
+			options: {
+				nospawn: true,
+			},
+		},
+		ember_handlebars: {
+			files: ['views/templates/*.hbs'],
+			tasks: ['ember_handlebars'],
+			options: {
+				nospawn: true,
+			}
+
+		}
+	},
+
 
   });
 
   // Load plugins here
-  grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  
+  grunt.loadNpmTasks('grunt-ember-handlebars');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+
   // Define your tasks here
-  grunt.registerTask('default', ['less','jshint']);
+  grunt.registerTask('default', ['watch']);
+
+  grunt.registerTask('manual', ['jshint','less','ember_handlebars']);
 };
