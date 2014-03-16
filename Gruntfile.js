@@ -7,10 +7,10 @@ module.exports = function(grunt) {
 	less: {
 	  development: {
 	    options: {
-	      paths: ["public/css/less"]
+	      paths: ["public/styles/"]
 	    },
 	    files: {
-	      "public/css/bootstrap.css": "public/css/less/bootstrap.less",
+	      "public/styles/site.css": "public/styles/site.less",
 	      "public/css/style.css": "public/css/less/style.less"
 	    }
 	  },
@@ -39,20 +39,6 @@ module.exports = function(grunt) {
 	  }
 	},
 
-	ember_handlebars: {
-      all: {
-        // In practice, this could be:
-        // src: ['templates/**/*.hbs', 'templates/**/*.handlebars']
-        src: ['views/templates/*.hbs'],
-        dest: 'public/js/game.tmpl.js'
-      },
-      options: {
-		  processName: function(filename) {
-		  	// this will give the name 'index' rather than the default 'views/templates/index.hbs' name
-		  	return filename.substring(filename.lastIndexOf('/')+ 1,filename.length - 4);
-		  }
-		}
-    },
 
 	watch: {
 		scripts: {
@@ -69,14 +55,6 @@ module.exports = function(grunt) {
 				nospawn: true,
 			},
 		},
-		ember_handlebars: {
-			files: ['views/templates/*.hbs'],
-			tasks: ['ember_handlebars'],
-			options: {
-				nospawn: true,
-			}
-
-		}
 	},
 
 
@@ -85,11 +63,10 @@ module.exports = function(grunt) {
   // Load plugins here
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-ember-handlebars');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Define your tasks here
   grunt.registerTask('default', ['watch']);
 
-  grunt.registerTask('manual', ['jshint','less','ember_handlebars']);
+  grunt.registerTask('manual', ['jshint','less']);
 };
