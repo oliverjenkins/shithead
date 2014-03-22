@@ -10,15 +10,6 @@ block content
 			| and <a href='http://www.jquery.com/' target='_blank'>jQuery</a>.
 		p Visit the <a href='http://keystonejs.com/guide' target='_blank'>Getting Started</a> guide to learn how to customise it.
 
-		each test in data.tests
-			h2 #{test.fullName}
-			iframe(src=test.videoEmbedLink, width=600,height=480)
-			ul
-				each item in test.items
-					li #{item.code} x #{item.quantity}
-
-		hr
-		
 		if user && user.canAccessKeystone
 			p
 				a(href='/keystone/signin').btn.btn-lg.btn-primary Open the Admin UI

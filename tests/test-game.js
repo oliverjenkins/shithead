@@ -21,7 +21,6 @@ exports.checkValidDeck = function(test ) {
   test.done();
 }
 
-
 exports.cardValue = function(test) { 
   
   // we check to see if all card in the pack are valid, 
@@ -92,6 +91,20 @@ exports.canPlayCardOnStack = function(test) {
   test.done();
 }
 
+exports.dealCards = function(test) { 
+  var newGame = game.newGame(3,[]);
+  newGame.players = ['Player1', 'Player2','Player3'];
+  newGame.deck = ["2C","3C","4C","5C","6C","7C","8C","9C","10C","JC","QC","KC","AC","2D","3D","4D","5D","6D","7D","8D","9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"];
+  newGame = game.dealCards(newGame);
+  test.deepEqual(newGame.hands[0], [ [ '2C', '5C', '8C' ], [ 'JC', 'AC', '4D' ], [ '7D', '10D', 'KD' ] ], 'Player 1 hand is not corret');
+  test.deepEqual(newGame.hands[1], [ [ '3C', '6C', '9C' ], [ 'QC', '2D', '5D' ], [ '8D', 'JD', 'AD' ] ], 'Player 2 hand is not correct');
+  test.deepEqual(newGame.hands[2], [ [ '4C', '7C', '10C' ], [ 'KC', '3D', '6D' ], [ '9D', 'QD', '2H' ] ], 'Player 3 hand is not correct');
+  test.deepEqual(newGame.deck,["3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"],'Deck is not correct' )
+
+  test.done();
+}
+
+
 exports.playCardOnStack = function(test) { 
   var newGame = {
     stack: ["2H","3D"],
@@ -160,58 +173,88 @@ exports.handToPlayFrom = function(test) {
   test.done();
 }
 
+exports.isCardInPlayersHand = function(test) { 
+  test.equal(game.isCardInPlayersHand( "2S",[["2S","3S","3S"],["8C","10C","QC"],["AC","3D","5D"]]),true,"Card is in players hand");
+  test.equal(game.isCardInPlayersHand( "8C",[["2S","3S","3S"],["8C","10C","QC"],["AC","3D","5D"]]),false,"Card is not in players hand");
+
+  test.equal(game.isCardInPlayersHand( "8C",[[],["8C","10C","QC"],["AC","3D","5D"]]),true,"Card is in players hand");
+  test.equal(game.isCardInPlayersHand( "2SS",[[],["8C","10C","QC"],["AC","3D","5D"]]),false,"Card is not in players hand");
+  test.equal(game.isCardInPlayersHand( "AC",[[],["8C","10C","QC"],["AC","3D","5D"]]),false,"Card is not in players hand");
+
+  test.equal(game.isCardInPlayersHand( "AC",[[],[],["AC","3D","5D"]]),true,"Card is in players hand");
+  test.equal(game.isCardInPlayersHand( "2S",[[],[],["AC","3D","5D"]]),false,"Card is not in players hand");
+  test.equal(game.isCardInPlayersHand( "AC",[[],[],[]]),false,"Hands are empty Card is not in players hand");
+
+  test.done();
+}
+
 exports.playCard = function(test) { 
   
   var newGame = game.newGame(['Player 1','Player 2'],wildCards);
+
   test.deepEqual(newGame, {
     stack: [],
-    drawPile: [],
-    players: [
-      {
-        'name': 'Player 1',
-        'hand': [[],[],[]]
-      },
-            {
-        'name': 'Player 2',
-        'hand': [[],[],[]]
-      }
-    ],
+    deck: [],
+    players: ['Player 1','Player 2'],
     currentPlayer: 0,
     playDirection: 1,
-    wildCards: wildCards
+    wildCards: wildCards,
+    hands: [[ [], [], [] ],[ [], [], [] ]]
   }, "New game is not re-set correctly");
 
 
-  newGame = game.dealCards(newGame, game.newPack());
   test.deepEqual(game.newPack(), ["2C","3C","4C","5C","6C","7C","8C","9C","10C","JC","QC","KC","AC","2D","3D","4D","5D","6D","7D","8D","9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"],"Pack is not valid");  
-  test.deepEqual(newGame.players[0].hand, [["2C","4C","6C"],["8C","10C","QC"],["AC","3D","5D"]],"Hand for player 1 is not correct");
-  test.deepEqual(newGame.players[1].hand, [["3C","5C","7C"],["9C","JC","KC"],["2D","4D","6D"]],"Hand for player 2 is not correct");
-  test.deepEqual(newGame.drawPile, ["7D","8D","9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"], "Draw pile is not correct");
+  newGame.deck = ["2C","3C","4C","5C","6C","7C","8C","9C","10C","JC","QC","KC","AC","2D","3D","4D","5D","6D","7D","8D","9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"];
+
+  newGame = game.dealCards(newGame);
+
+  test.deepEqual(newGame.hands[0], [["2C","4C","6C"],["8C","10C","QC"],["AC","3D","5D"]],"Hand for player 1 is not correct");
+  test.deepEqual(newGame.hands[1], [["3C","5C","7C"],["9C","JC","KC"],["2D","4D","6D"]],"Hand for player 2 is not correct");
+  test.deepEqual(newGame.deck, ["7D","8D","9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"], "Deck is not correct");
   test.deepEqual(newGame.stack, [],"Stack does not start empty");
 
   // Players playing cards
-  game.playCard(0,1, newGame);  // Playing card 4C
-  test.deepEqual(newGame.players[0].hand, [["2C","6C"],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct");
+  game.playCard(0,'4C', newGame);  // Playing card 4C - also should pick up from the deck
+  test.deepEqual(newGame.hands[0], [["2C","6C","7D"],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct");
+  test.deepEqual(newGame.deck, ["8D","9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"], "Deck is not correct after card played");
   test.deepEqual(newGame.stack, ["4C"], "Stack is not valid following players move 1: " + newGame.stack);
   
-  //  Player playing a card
-  game.playCard(0,0, newGame);
-  test.deepEqual(newGame.players[0].hand, [["6C"],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 2");
+  // // //  Player playing a card
+  game.playCard(0,'2C', newGame);
+  test.deepEqual(newGame.hands[0], [["6C",'7D','8D'],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 2");
   test.deepEqual(newGame.stack, ["4C","2C"], "Stack is not valid following players move number 2");
+  test.deepEqual(newGame.deck, ["9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"], "Deck is not correct after card played");
   test.equal(newGame.playDirection, -1, "Play direction should have changed following a 4");
 
-  //  Player playing a card
-  game.playCard(0,0, newGame);
-  test.deepEqual(newGame.players[0].hand, [[],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 3");
+  // Try a card not in the hand
+  game.playCard(0,'KH', newGame);
+  test.deepEqual(newGame.hands[0], [["6C",'7D','8D'],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 after incorrect more");
+  test.deepEqual(newGame.deck,["9D","10D","JD","QD","KD","AD","2H","3H","4H","5H","6H","7H","8H","9H","10H","JH","QH","KH","AH","2S","3S","4S","5S","6S","7S","8S","9S","10S","JS","QS","KS","AS"],'Deck is not valid after incorrect more')
+  test.deepEqual(newGame.stack, ["4C","2C"], "Stack is not valid following incorrect more");
 
-  game.playCard(0,2, newGame);
-  test.deepEqual(newGame.players[0].hand, [[],["8C","10C"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 4");
-  test.deepEqual(newGame.stack, ["4C","2C","6C","QC"], "Stack is not valid following players move number 4");
+  // // //  Player playing a card
+  game.playCard(0,'8D', newGame);
+  test.deepEqual(newGame.hands[0], [["6C",'7D','9D'],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 3");
+  test.deepEqual(newGame.stack, ["4C","2C","8D"], "Stack is not valid following players move number 3");
 
+  // // Skip ahead until the stack is cleared
+  newGame.deck = [];
+  game.playCard(0,'9D', newGame);
+  test.deepEqual(newGame.hands[0], [["6C",'7D'],["8C","10C","QC"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 4");
+  test.deepEqual(newGame.deck,[],'Deck is not valid')
+  test.deepEqual(newGame.stack, ["4C","2C","8D","9D"], "Stack is not valid following players move number 4");
+
+
+
+  
+  newGame.hands[0][0] = [];
+  game.playCard(0,'QC', newGame);
+  test.deepEqual(newGame.hands[0], [[],["8C","10C"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 5");
+  test.deepEqual(newGame.stack, ["4C","2C","8D","9D","QC"], "Stack is not valid following players move number 5");
   test.deepEqual(game.isWildCard("10C",newGame.wildCards),true, "10c should be wild");
   
-  game.playCard(0,1, newGame);
-  test.deepEqual(newGame.players[0].hand, [[],["8C"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 5");
+  game.playCard(0,'10C', newGame);
+  test.deepEqual(newGame.hands[0], [[],["8C"],["AC","3D","5D"]],"Playing card, Hand for player 1 is not correct after move 6");
   test.deepEqual(newGame.stack, [], "Stack should have been cleared: " +  newGame.stack);
 
   test.done();
