@@ -14,7 +14,7 @@ Game.add({
 	players: { type: Types.Relationship, ref: 'User', many: true },
 	currentPlayer: {type: Types.Number, default: 0, required: true },
 	playDirection: {type: Types.Number, default: 1, required: true },
-	gameState: { type: Types.Select, options: 'draft, started, finished', default: 'draft' }
+	state: { type: Types.Select, options: 'draft, started, finished', default: 'draft' }
 });
 
 Game.schema.add({
@@ -43,32 +43,37 @@ Game.schema.statics.createGame = function(title, player,callback) {
 	});
 }
 
+/** Attempts to get a game based on the current slug */
+Game.schema.statics.getBySlug = function(slug, callback) { 
+	this.findOne({slug: slug}).exec(function(err,game) {
+		callback(err,game);
+	});
+}
 
 /*** 
   * Methods
   */
 /** Adds a player to the game */
 Game.schema.methods.addPlayer = function(newPlayer,callback) { 
-	console.log("AddPlater Methods")
 	// Check to see if the game has started and that this player is not in the game
-	if (this.gameState !== 'draft') { 
+	if (this.state !== 'draft') { 
 		callback({message: 'Game must be in draft to add a player'});
 	} else if (_.indexOf(this.playes,newPlayer) !== -1) { 
 		callback({message: 'Player is already in the game'});
 	} else { 
 		this.players.push(newPlayer);
-		callback();
+		callback(false,this);
 	}
 } 
 
 /** Deal the cards to each of the players at the start of the game.  
 Will also move the game state */
 Game.schema.methods.deal = function (callback) {
-	if (this.gameState === 'draft') { 
-		shithead.dealCards(this);
-		callback();
+	if (this.state === 'draft') { 
+		var game = shithead.dealCards(this);
+		callback(false,game);
 	} else { 
-		callback({message: 'Game must be in draft to deal cards'});
+		callback({message: 'Game must be in draft to deal cards'},this);
 	}	
 }
 

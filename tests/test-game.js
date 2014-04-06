@@ -244,8 +244,6 @@ exports.playCard = function(test) {
   test.deepEqual(newGame.deck,[],'Deck is not valid')
   test.deepEqual(newGame.stack, ["4C","2C","8D","9D"], "Stack is not valid following players move number 4");
 
-
-
   
   newGame.hands[0][0] = [];
   game.playCard(0,'QC', newGame);

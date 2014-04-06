@@ -7,28 +7,28 @@ exports = module.exports = function(req, res) {
 	
 	// Set locals
 	locals.section = 'game';
-
+	locals.data = {
+		game: false
+	}
 
 	view.on('init',function(next) { 
-		keystone.list('Game').model.createGame('First Game','5326094602e3599b203dd2fb', function(err,game) {
-			
-			game.addPlayer('532db4f504ad986c2405afd3',function(err) { 
-				console.log(game)
-				console.log('Add Player Error',err);
-				game.deal(function(err) { 
-					console.log('Deal error',err);
-					console.log(game);
-				})
+		if (req.params.action =='new') {
+			// TODO: Create the game based on the two test users
+			keystone.list('Game').model.createGame('First Game','5326094602e3599b203dd2fb', function(err,game) {
+				game.addPlayer('532db4f504ad986c2405afd3',function(err,game) { 
+					game.save();
+					locals.data.game = game;
+					next();
+					
+				});
+			})
+		} else { 
+			next();
+		}
 
-			});
-
-		})
-
-
-		next();
 	});
 
 	// Render the view
-	view.render('index');
+	view.render('game/start');
 	
 }

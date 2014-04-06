@@ -35,7 +35,6 @@ module.exports = function(grunt) {
 	      console: true,
 	      module: true
 	    }
-
 	  }
 	},
 

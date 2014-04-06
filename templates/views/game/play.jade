@@ -1,0 +1,22 @@
+extends ../../layouts/default
+
+block intro
+	.container: .jumbotron
+		h1 Play Game
+
+block content
+	.container
+		.row
+			.col-md-12
+				p Hello World
+
+		each player,i in data.game.players
+			.row
+				.col-md-12
+					h2 #{player}
+			if data.game.hands[i]
+				each hand in data.game.hands[i]
+					ul
+						li #{data.game.hands[i][hand]}
+		
+

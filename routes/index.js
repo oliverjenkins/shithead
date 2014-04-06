@@ -42,8 +42,8 @@ exports = module.exports = function(app) {
 	app.get('/blog/post/:post', routes.views.post);
 	app.all('/contact', routes.views.contact);
 
-	app.get('/game/(start)?', routes.game.start);
-	app.get('/game/:gameId/:action(join|play)?', routes.views.index);
+	app.get('/game/:action(new)', routes.game.start);
+	app.all('/game/:gameSlug/:action(join|play|start)', routes.game.play);
 
 
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:

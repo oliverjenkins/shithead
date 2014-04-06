@@ -1,0 +1,16 @@
+extends ../../layouts/default
+
+block content
+	.container: .jumbotron
+		img(src='/images/logo.svg', width='160')
+		h1 Create game
+
+		p Game has been created, wait for now players or start the game
+
+		if data.game.players.length > 1
+			each player in data.game.players
+				.player #{player}
+
+			form(action='/game/' + data.game.slug + '/start',method='post')
+				button.btn.btn-primary Start Game
+		
